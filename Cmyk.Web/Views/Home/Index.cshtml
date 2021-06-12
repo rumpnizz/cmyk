@@ -1,0 +1,58 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+<div style="display: inline-block; width: 800px;">
+    <h2>CMYK</h2>
+    <p>
+        Check wether an image is in CMYK or not. CMYK is only possible for jpg and jpeg files. (Nothing gets saved when uploading).
+    </p>
+    <div class="dropzone"></div>
+    
+    <div style="margin-top: 10px" class="cf">
+        <div style="position: relative; width: 20px; height: 20px; float: left;">
+            <div class="cmyk-overlay yes"></div>
+        </div>
+        <div style="float: left; margin-right: 10px; height: 20px; line-height: 20px; margin-left: 5px;">= CMYK</div>
+
+        <div style="position: relative; width: 20px; height: 20px; float: left;">
+            <div class="cmyk-overlay"></div>
+        </div>
+        <div style="float: left; height: 20px; line-height: 20px; margin-left: 5px;">= RGB</div>
+    </div>
+    <div>
+        <p>Try the downloading the following images and drag them to the box above.</p>
+        <div style="display: flex;"></div>
+        <img src="~/Content/rgb.jpg" style="width: 250px; height: auto;" />
+        <img src="~/Content/cmyk.jpg" style="width: 250px; height: auto" />
+    </div>
+</div>
+
+@section scripts {
+    
+    <script>
+        Dropzone.autoDiscover = false;
+        (function($) {
+
+            function onComplete(data) {
+                var res = eval('(' + data.xhr.responseText + ')');
+                $(data.previewElement).addClass('dz-complete');
+
+                var $check = $('<div class="cmyk-overlay"></div>');
+                console.log(res);
+                if (res.IsCmyk)
+                    $check.addClass('yes');
+
+                $(data.previewElement).find('.dz-image').append($check);
+            }
+
+
+            function init() {
+                var dropzone = $('.dropzone').dropzone({ url: '/Home/Index', method: 'post', paramName: 'file', complete: onComplete, acceptedFiles: 'image/jpeg,image/jpg' });
+            }
+
+            $(document).ready(init);
+        })(jQuery);
+    </script>
+}
